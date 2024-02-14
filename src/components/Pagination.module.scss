@@ -1,0 +1,26 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+}
+
+.previous,
+.next,
+.page {
+  margin: 0 5px; /* Ajoute une marge autour des boutons et des numéros de page */
+  padding: 5px 10px; /* Ajoute un peu d'espace intérieur aux boutons et aux numéros de page */
+  border: 1px solid #ccc; /* Ajoute une bordure */
+  border-radius: 5px; /* Ajoute un peu de bord arrondi */
+  cursor: pointer; /* Change le curseur en pointeur au survol */
+}
+
+.active {
+  background-color: #007bff; /* Change la couleur de fond pour la page active */
+  color: #fff; /* Change la couleur du texte pour la page active */
+}
+
+.disabled {
+  opacity: 0.5; /* Réduit l'opacité des boutons Précédent/Suivant lorsqu'ils sont désactivés */
+  cursor: not-allowed; /* Indique que les boutons sont désactivés */
+}
