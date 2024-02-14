@@ -1,9 +1,8 @@
 // Recipe.jsx
-
 import { useState } from "react";
 import styles from "./Recipe.module.scss";
 
-function Recipe({ id, title, images, likes, dislikes, handleDelete }) {
+function Recipe({ id, title, category, images, likes, dislikes, handleDelete }) {
   const [likeCount, setLikeCount] = useState(likes);
   const [dislikeCount, setDislikeCount] = useState(dislikes);
   const [likeActive, setLikeActive] = useState(false);
@@ -34,6 +33,7 @@ function Recipe({ id, title, images, likes, dislikes, handleDelete }) {
   return (
     <div className={styles.recipe}>
       <i onClick={handleClickDelete} className="fa-solid fa-xmark"></i>
+
       <div className={styles.imageContainer}>
         <img src={images} alt="recipe" />
       </div>
@@ -41,6 +41,7 @@ function Recipe({ id, title, images, likes, dislikes, handleDelete }) {
         className={`${styles.recipeTitle} d-flex flex-column justify-content-center align-items-center`}
       >
         <h3 className="mb-10">{title}</h3>
+        <p className="mb-10">{category}</p>
         <div className="d-flex justify-content-center align-items-center">
           <i
             className={`far fa-thumbs-up me-1 ${
@@ -50,7 +51,6 @@ function Recipe({ id, title, images, likes, dislikes, handleDelete }) {
           ></i>
           <span className="me-2">{likeCount}</span>
           &nbsp;&nbsp;
-          <span className="me-2"></span>
           <i
             className={`far fa-thumbs-down me-1 ${
               dislikeActive ? styles.active : ""

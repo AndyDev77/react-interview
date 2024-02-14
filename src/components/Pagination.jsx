@@ -1,17 +1,20 @@
+// Pagination.jsx
 import React from "react";
 import ReactPaginate from "react-paginate";
 import styles from "./Pagination.module.scss";
 
 function Pagination({ pageCount, onPageChange }) {
-  return (
-    
+  const handlePageClick = (data) => {
+    onPageChange(data.selected + 1); // Ajoutez 1 car la pagination commence à 1, pas à 0
+  };
 
+  return (
     <ReactPaginate
       previousLabel={"Précédent"}
       nextLabel={"Suivant"}
       breakLabel={"..."}
       pageCount={pageCount}
-      onPageChange={onPageChange}
+      onPageChange={handlePageClick}
       containerClassName={"pagination"}
       activeClassName={"active"}
       pageRangeDisplayed={2} // Nombre de pages affichées avant et après la page actuelle

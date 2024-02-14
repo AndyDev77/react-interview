@@ -1,61 +1,64 @@
-import React, { useState, useEffect } from "react";
-import Select from "react-select";
-import styles from "./Content.module.scss";
+// Content.jsx
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  fetchMoviesSuccess,
+  filterMoviesByCategory,
+  deleteMovie,
+} from "../redux/actions/actions";
 import Recipe from "./Recipe";
-import Pagination from "./Pagination"; // Import du composant Pagination
+import Pagination from "./Pagination";
 import { movies$ } from "../data/movies";
+import styles from "./Content.module.scss";
+import Select from "react-select"; // Import de la composante Select depuis react-select
 
 function Content() {
-  const [movies, setMovies] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const dispatch = useDispatch();
+  const [pageCount, setPageCount] = useState(1); // Définir une valeur initiale pour pageCount
+  const [selectedCategories, setSelectedCategories] = useState([]); // État pour stocker les catégories sélectionnées
+  const [categories, setCategories] = useState([]); // État pour stocker les catégories uniques
+  const [perPage, setPerPage] = useState(4); // Nombre d'éléments par page
+  const [currentPage, setCurrentPage] = useState(1); // Page actuelle
 
   useEffect(() => {
     movies$.then((movies) => {
-      setMovies(movies);
-      const uniqueCategories = [
-        ...new Set(movies.map((movie) => movie.category)),
-      ];
-      setCategories(
-        uniqueCategories.map((category) => ({
-          value: category,
-          label: category,
-        }))
+      dispatch(fetchMoviesSuccess(movies));
+      // Extraire les catégories uniques une fois les films chargés
+      const uniqueCategories = Array.from(
+        new Set(movies.map((movie) => movie.category))
       );
+      setCategories(uniqueCategories);
+      // Calculer le nombre de pages en fonction du nombre de films
+      setPageCount(Math.ceil(movies.length / perPage));
     });
-  }, []);
+  }, [dispatch, perPage]);
+
+  const allMovies = useSelector((state) => state.movies);
+  const filteredMovies = useSelector((state) => state.filteredMovies);
 
   const handleCategoryChange = (selectedOptions) => {
-    setSelectedCategories(selectedOptions.map((option) => option.value));
+    setSelectedCategories(selectedOptions); // Mettre à jour les catégories sélectionnées
+    const categories = selectedOptions.map((option) => option.value);
+    dispatch(filterMoviesByCategory(categories));
+    setCurrentPage(1); // Réinitialiser la page actuelle à la première page lors du changement de catégorie
   };
 
-  const handleChangePage = ({ selected }) => {
-    setCurrentPage(selected);
+  const handlePerPageChange = (selectedOption) => {
+    setPerPage(selectedOption.value); // Mettre à jour le nombre d'éléments par page
+    setCurrentPage(1); // Réinitialiser la page actuelle à la première page
   };
 
-  const handleChangeItemsPerPage = (selectedOption) => {
-    setItemsPerPage(selectedOption.value);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const handleDelete = (id) => {
-    setMovies(movies.filter((movie) => movie.id !== id));
+    dispatch(deleteMovie(id));
   };
 
-  const availableCategories = categories.filter((category) =>
-    movies.some((movie) => movie.category === category.value)
-  );
-
-  const filteredMovies =
-    selectedCategories.length > 0
-      ? movies.filter((movie) => selectedCategories.includes(movie.category))
-      : movies;
-
-  const offset = currentPage * itemsPerPage;
-  const currentItems = filteredMovies.slice(offset, offset + itemsPerPage);
-
-  const pageCount = Math.ceil(filteredMovies.length / itemsPerPage);
+  const visibleMovies = selectedCategories.length
+    ? filteredMovies
+    : allMovies;
 
   return (
     <div className="flex-fill container p-20">
@@ -68,36 +71,36 @@ function Content() {
             Filtrer par catégorie:
           </label>
           <Select
-            id="categories"
-            value={categories.filter((option) =>
-              selectedCategories.includes(option.value)
-            )}
+            value={selectedCategories}
             onChange={handleCategoryChange}
-            options={availableCategories}
+            options={categories.map((category) => ({
+              value: category,
+              label: category,
+            }))}
             isMulti
           />
         </div>
+
         <div className={styles.grid}>
-          {currentItems.map((movie) => (
-            <Recipe
-              key={movie.id}
-              id={movie.id}
-              title={movie.title}
-              images={movie.images}
-              likes={movie.likes}
-              dislikes={movie.dislikes}
-              category={movie.category}
-              handleDelete={handleDelete}
-            />
-          ))}
+          {visibleMovies
+            .slice((currentPage - 1) * perPage, currentPage * perPage)
+            .map((movie) => (
+              <Recipe
+                key={movie.id}
+                {...movie}
+                handleDelete={handleDelete}
+              />
+            ))}
         </div>
-        <div
-          className={`d-flex flex-row justify-content-between align-items-center my-30 ${styles.filterBar}`}
-        >
-          <Pagination pageCount={pageCount} onPageChange={handleChangePage} />
+
+        <div className={`d-flex flex-row justify-content-between align-items-center my-30 ${styles.filterBar}`}>
+          <Pagination
+            pageCount={Math.ceil(visibleMovies.length / perPage)}
+            onPageChange={handlePageChange}
+          />{" "}
           <Select
-            value={{ value: itemsPerPage, label: itemsPerPage }}
-            onChange={handleChangeItemsPerPage}
+            value={{ value: perPage, label: perPage }} // Utilisez un objet pour représenter la valeur sélectionnée
+            onChange={handlePerPageChange}
             options={[
               { value: 4, label: 4 },
               { value: 8, label: 8 },
