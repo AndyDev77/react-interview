@@ -1,8 +1,8 @@
 // Recipe.jsx
 import { useState } from "react";
-import styles from "./Recipe.module.scss";
+import styles from "./Movie.module.scss";
 
-function Recipe({ id, title, category, images, likes, dislikes, handleDelete }) {
+function Movie({ id, title, category, images, likes, dislikes, handleDelete }) {
   const [likeCount, setLikeCount] = useState(likes);
   const [dislikeCount, setDislikeCount] = useState(dislikes);
   const [likeActive, setLikeActive] = useState(false);
@@ -31,14 +31,14 @@ function Recipe({ id, title, category, images, likes, dislikes, handleDelete }) 
   }
 
   return (
-    <div className={styles.recipe}>
+    <div className={styles.movie}>
       <i onClick={handleClickDelete} className="fa-solid fa-xmark"></i>
 
       <div className={styles.imageContainer}>
-        <img src={images} alt="recipe" />
+        <img src={images} alt="movie" />
       </div>
       <div
-        className={`${styles.recipeTitle} d-flex flex-column justify-content-center align-items-center`}
+        className={`${styles.movieTitle} d-flex flex-column justify-content-center align-items-center`}
       >
         <h3 className="mb-10">{title}</h3>
         <p className="mb-10">{category}</p>
@@ -64,4 +64,4 @@ function Recipe({ id, title, category, images, likes, dislikes, handleDelete }) 
   );
 }
 
-export default Recipe;
+export default Movie;

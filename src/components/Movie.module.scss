@@ -1,4 +1,4 @@
-.recipe {
+.movie {
   position: relative;
   border-radius: 20px;
   height: 400px;
@@ -23,7 +23,7 @@
     img {
       transform: scale(1.1);
     }
-    .recipeTitle {
+    .movieTitle {
       color: var(--primary);
     }
   }
@@ -40,7 +40,7 @@
   }
 }
 
-.recipeTitle {
+.movieTitle {
   height: 110px;
   transition: 0.2s color;
   border: 1px solid var(--gray-2);

@@ -1,4 +1,8 @@
-import { FETCH_MOVIES_SUCCESS, FILTER_MOVIES_BY_CATEGORY, DELETE_MOVIE } from "../actions/actions";
+import {
+  FETCH_MOVIES_SUCCESS,
+  FILTER_MOVIES_BY_CATEGORY,
+  DELETE_MOVIE,
+} from "../actions/actions";
 
 const initialState = {
   movies: [],
@@ -6,6 +10,8 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
+  let selectedCategories, filteredMovies, updatedMovies, updatedFilteredMovies; // Utilisation de let à la place de const
+
   switch (action.type) {
     case FETCH_MOVIES_SUCCESS:
       return {
@@ -14,8 +20,8 @@ const reducer = (state = initialState, action) => {
         filteredMovies: action.payload,
       };
     case FILTER_MOVIES_BY_CATEGORY:
-      const selectedCategories = action.payload;
-      const filteredMovies =
+      selectedCategories = action.payload; // Utilisation de la variable déclarée précédemment
+      filteredMovies =
         selectedCategories.length > 0
           ? state.movies.filter((movie) =>
               selectedCategories.includes(movie.category)
@@ -26,8 +32,12 @@ const reducer = (state = initialState, action) => {
         filteredMovies,
       };
     case DELETE_MOVIE:
-      const updatedMovies = state.movies.filter(movie => movie.id !== action.payload);
-      const updatedFilteredMovies = state.filteredMovies.filter(movie => movie.id !== action.payload);
+      updatedMovies = state.movies.filter(
+        (movie) => movie.id !== action.payload
+      );
+      updatedFilteredMovies = state.filteredMovies.filter(
+        (movie) => movie.id !== action.payload
+      );
       return {
         ...state,
         movies: updatedMovies,

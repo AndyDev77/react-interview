@@ -1,12 +1,11 @@
-// Content.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   fetchMoviesSuccess,
   filterMoviesByCategory,
   deleteMovie,
 } from "../redux/actions/actions";
-import Recipe from "./Recipe";
+import Movie from "./Movie";
 import Pagination from "./Pagination";
 import { movies$ } from "../data/movies";
 import styles from "./Content.module.scss";
@@ -14,8 +13,8 @@ import Select from "react-select"; // Import de la composante Select depuis reac
 
 function Content() {
   const dispatch = useDispatch();
-  const [pageCount, setPageCount] = useState(1); // Définir une valeur initiale pour pageCount
   const [selectedCategories, setSelectedCategories] = useState([]); // État pour stocker les catégories sélectionnées
+  const [pageCount, setPageCount] = useState(1); // Définir une valeur initiale pour pageCount
   const [categories, setCategories] = useState([]); // État pour stocker les catégories uniques
   const [perPage, setPerPage] = useState(4); // Nombre d'éléments par page
   const [currentPage, setCurrentPage] = useState(1); // Page actuelle
@@ -29,9 +28,12 @@ function Content() {
       );
       setCategories(uniqueCategories);
       // Calculer le nombre de pages en fonction du nombre de films
-      setPageCount(Math.ceil(movies.length / perPage));
+      const pageCount = Math.ceil(movies.length / perPage);
+      setPageCount(pageCount);
     });
   }, [dispatch, perPage]);
+
+ 
 
   const allMovies = useSelector((state) => state.movies);
   const filteredMovies = useSelector((state) => state.filteredMovies);
@@ -85,7 +87,7 @@ function Content() {
           {visibleMovies
             .slice((currentPage - 1) * perPage, currentPage * perPage)
             .map((movie) => (
-              <Recipe
+              <Movie
                 key={movie.id}
                 {...movie}
                 handleDelete={handleDelete}
@@ -95,7 +97,7 @@ function Content() {
 
         <div className={`d-flex flex-row justify-content-between align-items-center my-30 ${styles.filterBar}`}>
           <Pagination
-            pageCount={Math.ceil(visibleMovies.length / perPage)}
+            pageCount={pageCount}
             onPageChange={handlePageChange}
           />{" "}
           <Select
